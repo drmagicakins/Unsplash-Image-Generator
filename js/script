@@ -1,0 +1,48 @@
+const UNSPLASH_ACCESS_KEY = "81wLLBoRIVJVI1koyqef_AddDaT06fElml0UmsPbV7s";
+
+const searchInput = document.getElementById("searchInput");
+const searchButton = document.getElementById("searchBtn");
+const imgGallery = document.getElementById("gallery");
+
+// fetch the searched images from unsplash
+function fetchPhotos(query = "") {
+  let url = `https://api.unsplash.com/photos/random?client_id=${UNSPLASH_ACCESS_KEY}&count=10`;
+
+  if (query) {
+    url = `https://api.unsplash.com/search/photos?client_id=${UNSPLASH_ACCESS_KEY}&query=${query}&per_page=10`;
+  }
+
+  fetch(url)
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+      // If a query was provided, the data will contain a 'result' array
+
+      const images = query ? data.results : data;
+      displayImages(images); // Pass the images array to displayImages
+    })
+    .catch((error) => {
+      console.error("Error fetching images:", error);
+    });
+
+  // Function to display images on the page
+  function displayImages(images) {
+    const imgElement = document.createElement("img");
+    imgElement.src = images.urls.regular;
+    imgElement.alt = images.description || "Unsplash image";
+    imgElement.loading = "lazy"; // Lazy load images
+
+    imgGallery.appendChild(imgElement);
+  }
+}
+
+// Event listener for the search button
+searchButton.addEventListener("click", () => {
+  alert("hi");
+  const query = searchInput.value.trim();
+  console.log(query);
+  fetchPhotos(query);
+});
+
+// Initialize load of random photos
+fetchPhotos();
